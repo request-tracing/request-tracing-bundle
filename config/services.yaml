@@ -1,0 +1,12 @@
+services:
+  RequestTracing\RequestTracingBundle\Monolog\RequestIdMonologProcessor:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+      - { name: monolog.processor }
+
+  RequestTracing\RequestTracingBundle\GuzzleHttp\RequestIdStorage:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  RequestTracing\RequestTracingBundle\GuzzleHttp\RequestIdMiddleware:
+    autowire: true
