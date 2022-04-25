@@ -15,14 +15,15 @@ jobs:
     name: "Run tests"
     runs-on: "ubuntu-20.04"
     strategy:
-      php-version: # https://www.php.net/supported-versions.php
-        - "7.4"
-        - "8.0"
-        - "8.1"
-      symfony-version: # https://symfony.com/releases
-        - "4.4"
-        - "5.4"
-        - "6.0"
+      matrix:
+        php-version: # https://www.php.net/supported-versions.php
+          - "7.4"
+          - "8.0"
+          - "8.1"
+        symfony-version: # https://symfony.com/releases
+          - "4.4"
+          - "5.4"
+          - "6.0"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
