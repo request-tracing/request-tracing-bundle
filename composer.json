@@ -1,5 +1,7 @@
 {
     "name": "request-tracing/request-tracing-bundle",
+    "description": "Symfony bundle for request tracing",
+    "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
         {
