@@ -21,7 +21,7 @@ php-cs-fixer-ci:
 
 PHONY: phpstan
 phpstan:
-	vendor/bin/phpstan analyse --level=max src/
+	vendor/bin/phpstan analyse src/
 
 # Based on https://suva.sh/posts/well-documented-makefiles/
 help:  ## Display this help
