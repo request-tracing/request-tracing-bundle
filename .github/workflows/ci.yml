@@ -1,29 +1,30 @@
 name: "CI"
 
 on:
-  pull_request:
+  pull_request: # Note: By default, a workflow only runs when a pull_request's activity type is opened, synchronize, or reopened
     branches:
-      - "main"
+      - "main" # on pull requests to main branch
   push:
     branches:
-      - "main"
+      - "main" # on merge to main branch assuming main branch is protected
+  workflow_dispatch:
   schedule:
     - cron: "37 13 * * 1"
 
 jobs:
   tests:
     name: "Run tests"
-    runs-on: "ubuntu-20.04"
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         php-version: # https://www.php.net/supported-versions.php
-          - "7.4"
-          - "8.0"
           - "8.1"
-        symfony-version: # https://symfony.com/releases
-          - "4.4"
-          - "5.4"
-          - "6.0"
+          - "8.2"
+        dependencies:
+          - "lowest"
+          - "highest"
+        os:
+          - "ubuntu-latest"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
@@ -38,21 +39,27 @@ jobs:
         run: "composer validate --strict --no-interaction --ansi"
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
-      - name: "Install specific Symfony version"
-        run: "composer --no-update require symfony/symfony:^${{ matrix.symfony-version }}"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
       - name: "Run tests"
         run: "make test"
 
   coding-standards:
     name: "Coding standards"
-    runs-on: "ubuntu-20.04"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        php:
+          - "8.2"
+        os:
+          - "ubuntu-latest"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "8.1"
+          php-version: "${{ matrix.php-version }}"
           coverage: "none"
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
@@ -61,14 +68,20 @@ jobs:
 
   static-analysis:
     name: "Static analysis"
-    runs-on: "ubuntu-20.04"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        php:
+          - "8.2"
+        os:
+          - "ubuntu-latest"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "8.1"
+          php-version: "${{ matrix.php-version }}"
           coverage: "none"
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
