@@ -16,7 +16,7 @@ final class RequestTracingExtensionTest extends AbstractExtensionTestCase
     }
 
     /** @test */
-    public function it_loads_the_extension_with_empty_config()
+    public function it_loads_the_extension_with_empty_config(): void
     {
         $this->load();
 
@@ -24,7 +24,7 @@ final class RequestTracingExtensionTest extends AbstractExtensionTestCase
     }
 
     /** @test */
-    public function it_loads_the_extension_with_a_custom_header_name()
+    public function it_loads_the_extension_with_a_custom_header_name(): void
     {
         $this->load([
             'header' => 'X-Amzn-Trace-Id',

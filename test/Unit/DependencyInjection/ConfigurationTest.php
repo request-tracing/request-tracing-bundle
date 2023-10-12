@@ -18,7 +18,7 @@ final class ConfigurationTest extends TestCase
     }
 
     /** @test */
-    public function it_provides_a_default_header_name()
+    public function it_provides_a_default_header_name(): void
     {
         $this->assertProcessedConfigurationEquals(
             [[]],
@@ -27,7 +27,7 @@ final class ConfigurationTest extends TestCase
     }
 
     /** @test */
-    public function it_allows_the_header_name_to_be_configured()
+    public function it_allows_the_header_name_to_be_configured(): void
     {
         $this->assertProcessedConfigurationEquals(
             [['header' => 'X-Amzn-Trace-Id']],

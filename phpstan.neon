@@ -2,3 +2,6 @@ parameters:
     level: max
 includes:
     - phpstan-baseline.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon

@@ -18,7 +18,7 @@ final class RequestIdMiddleware
     public function __invoke(callable $handler): callable
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            if ($this->requestIdStorage->getRequestId()) {
+            if ('' !== $this->requestIdStorage->getRequestId()) {
                 $request = $request->withHeader($this->requestIdStorage->getHeader(), $this->requestIdStorage->getRequestId());
             }
 

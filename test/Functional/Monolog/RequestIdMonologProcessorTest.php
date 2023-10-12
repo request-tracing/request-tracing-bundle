@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace RequestTracing\RequestTracingBundle\Functional\Monolog;
 
-use Monolog\Handler\TestHandler;
-use Psr\Log\LogLevel;
+use Monolog\Level;
+use Monolog\LogRecord;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -27,13 +27,10 @@ final class RequestIdMonologProcessorTest extends WebTestCase
 
         $this->assertTrue($this->client->getResponse()->isOk());
 
-        /** @var TestHandler */
         $testHandler = $this->client->getContainer()->get('logger')->getHandlers()[0];
 
-        $this->assertTrue($testHandler->hasRecordThatContains('Hello from /', LogLevel::INFO));
-        $this->assertTrue($testHandler->hasRecordThatPasses(function (array $record) {
-            return 'Hello from /' === $record['message'] && 'ea1379-42' === $record['extra']['request_id'];
-        }, LogLevel::INFO));
+        $this->assertTrue($testHandler->hasRecordThatContains('Hello from /', Level::Info));
+        $this->assertTrue($testHandler->hasRecordThatPasses(static fn (LogRecord $record): bool => 'Hello from /' === $record->message && 'ea1379-42' === $record->extra['request_id'], Level::Info));
     }
 
     /** @test */
@@ -43,12 +40,9 @@ final class RequestIdMonologProcessorTest extends WebTestCase
 
         $this->assertTrue($this->client->getResponse()->isOk());
 
-        /** @var TestHandler */
         $testHandler = $this->client->getContainer()->get('logger')->getHandlers()[0];
 
-        $this->assertTrue($testHandler->hasRecordThatContains('Hello from /', LogLevel::INFO));
-        $this->assertTrue($testHandler->hasRecordThatPasses(function (array $record) {
-            return 'Hello from /' === $record['message'] && false === array_key_exists('request_id', $record['extra']);
-        }, LogLevel::INFO));
+        $this->assertTrue($testHandler->hasRecordThatContains('Hello from /', Level::Info));
+        $this->assertTrue($testHandler->hasRecordThatPasses(static fn (LogRecord $record): bool => 'Hello from /' === $record->message && !array_key_exists('request_id', $record->extra), Level::Info));
     }
 }
