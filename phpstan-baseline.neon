@@ -4,14 +4,3 @@ parameters:
 			message: "#^Method RequestTracing\\\\RequestTracingBundle\\\\DependencyInjection\\\\RequestTracingExtension\\:\\:loadInternal\\(\\) has parameter \\$mergedConfig with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/DependencyInjection/RequestTracingExtension.php
-
-		-
-			message: "#^Method RequestTracing\\\\RequestTracingBundle\\\\Monolog\\\\RequestIdMonologProcessor\\:\\:__invoke\\(\\) has parameter \\$record with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Monolog/RequestIdMonologProcessor.php
-
-		-
-			message: "#^Method RequestTracing\\\\RequestTracingBundle\\\\Monolog\\\\RequestIdMonologProcessor\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Monolog/RequestIdMonologProcessor.php
-

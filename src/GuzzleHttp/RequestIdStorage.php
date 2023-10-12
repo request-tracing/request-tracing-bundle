@@ -18,7 +18,7 @@ final class RequestIdStorage
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        $this->requestId = (string) $event->getRequest()->headers->get($this->header, '');
+        $this->requestId = $event->getRequest()->headers->get($this->header, '');
     }
 
     public function getRequestId(): string

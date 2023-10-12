@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace RequestTracing\RequestTracingBundle\DependencyInjection;
 
+use RequestTracing\RequestTracingBundle\Monolog\RequestIdMonologProcessor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
@@ -19,8 +19,7 @@ final class RequestTracingExtension extends ConfigurableExtension
 
         $config = $this->processConfiguration(new Configuration(), [$mergedConfig]);
 
-        /** @var Definition $definition */
-        $definition = $container->getDefinition('RequestTracing\RequestTracingBundle\Monolog\RequestIdMonologProcessor');
+        $definition = $container->getDefinition(RequestIdMonologProcessor::class);
         $definition->addArgument($config['header']);
     }
 }
