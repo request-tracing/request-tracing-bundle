@@ -25,6 +25,10 @@ jobs:
           - "highest"
         os:
           - "ubuntu-latest"
+        symfony-version: # https://symfony.com/releases
+          - "5.4"
+          - "6.4"
+          - "7.1"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
