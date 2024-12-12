@@ -53,7 +53,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        php:
+        php-version:
           - "8.2"
         os:
           - "ubuntu-latest"
@@ -75,7 +75,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        php:
+        php-version:
           - "8.2"
         os:
           - "ubuntu-latest"
