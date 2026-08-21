@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+/.editorconfig      export-ignore
+/.gitattributes     export-ignore
+/.github/           export-ignore
+/.gitignore         export-ignore
+/.php-cs-fixer.php  export-ignore
+/phpstan.dist.neon  export-ignore
+/phpunit.xml.dist   export-ignore
+/test/              export-ignore
+/Makefile           export-ignore
