@@ -6,7 +6,8 @@ namespace RequestTracing\RequestTracingBundle\Unit\Monolog;
 
 use Monolog\Level;
 use Monolog\LogRecord;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RequestTracing\RequestTracingBundle\Monolog\RequestIdMonologProcessor;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,9 +27,7 @@ final class RequestIdMonologProcessorTest extends TestCase
         $this->processor = new RequestIdMonologProcessor($this->header);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_adds_the_request_id_if_it_was_available_in_the_request(): void
     {
         $record = $this->createRecord();
@@ -40,12 +39,10 @@ final class RequestIdMonologProcessorTest extends TestCase
         $expectedRecord = $record;
         $expectedRecord->extra['request_id'] = $requestId;
 
-        $this->assertEquals($expectedRecord, $this->invokeProcessor($record));
+        self::assertEquals($expectedRecord, $this->invokeProcessor($record));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_leaves_the_record_untouched_if_no_request_id_was_available_in_the_request(): void
     {
         $record = $this->createRecord();
@@ -55,24 +52,22 @@ final class RequestIdMonologProcessorTest extends TestCase
 
         $expectedRecord = $record;
 
-        $this->assertEquals($expectedRecord, $this->invokeProcessor($record));
+        self::assertEquals($expectedRecord, $this->invokeProcessor($record));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_leaves_the_record_untouched_if_no_request_was_handled(): void
     {
         $record = $this->createRecord();
 
         $expectedRecord = $record;
 
-        $this->assertEquals($expectedRecord, $this->invokeProcessor($record));
+        self::assertEquals($expectedRecord, $this->invokeProcessor($record));
     }
 
-    private function createGetResponseEvent(string $requestId = ''): MockObject&RequestEvent
+    private function createGetResponseEvent(string $requestId = ''): Stub&RequestEvent
     {
-        $getResponseEventMock = $this->createMock(RequestEvent::class);
+        $getResponseEventStub = self::createStub(RequestEvent::class);
 
         $request = new Request();
 
@@ -80,11 +75,11 @@ final class RequestIdMonologProcessorTest extends TestCase
             $request->headers->set($this->header, $requestId);
         }
 
-        $getResponseEventMock
+        $getResponseEventStub
             ->method('getRequest')
             ->willReturn($request);
 
-        return $getResponseEventMock;
+        return $getResponseEventStub;
     }
 
     private function invokeProcessor(LogRecord $record): LogRecord

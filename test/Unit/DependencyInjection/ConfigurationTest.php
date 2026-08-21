@@ -6,6 +6,7 @@ namespace RequestTracing\RequestTracingBundle\Unit\DependencyInjection;
 
 use Matthias\SymfonyConfigTest\PhpUnit\ConfigurationTestCaseTrait;
 use Monolog\Test\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use RequestTracing\RequestTracingBundle\DependencyInjection\Configuration;
 
 final class ConfigurationTest extends TestCase
@@ -17,7 +18,7 @@ final class ConfigurationTest extends TestCase
         return new Configuration();
     }
 
-    /** @test */
+    #[Test]
     public function it_provides_a_default_header_name(): void
     {
         $this->assertProcessedConfigurationEquals(
@@ -26,7 +27,7 @@ final class ConfigurationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_the_header_name_to_be_configured(): void
     {
         $this->assertProcessedConfigurationEquals(

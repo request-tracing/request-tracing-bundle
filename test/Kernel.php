@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
@@ -20,13 +21,12 @@ final class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
-    public function registerBundles(): array
+    /** @return iterable<BundleInterface> */
+    public function registerBundles(): iterable
     {
-        return [
-            new FrameworkBundle(),
-            new MonologBundle(),
-            new RequestTracingBundle(),
-        ];
+        yield new FrameworkBundle();
+        yield new MonologBundle();
+        yield new RequestTracingBundle();
     }
 
     protected function configureContainer(ContainerConfigurator $c): void
@@ -73,7 +73,13 @@ final class Kernel extends BaseKernel
 
     public function subRequest(RequestIdStorage $requestIdStorage): Response
     {
-        $client = new Client(['handler' => $this->getContainer()->get('my_guzzle_http_handler_stack')]);
+        $handlerStack = $this->getContainer()->get('my_guzzle_http_handler_stack');
+
+        if (!$handlerStack instanceof HandlerStack) {
+            throw new \LogicException('The Guzzle handler stack is not configured.');
+        }
+
+        $client = new Client(['handler' => $handlerStack]);
         $client->request('GET', '/another_service');
 
         return new Response('👍', Response::HTTP_OK);
