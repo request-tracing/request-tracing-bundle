@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 final class RequestTracingExtension extends ConfigurableExtension
 {
+    /** @param array<mixed> $mergedConfig */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
