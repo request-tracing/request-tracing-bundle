@@ -1,9 +1,19 @@
 # RequestTracingBundle
 
+[![CI](https://github.com/request-tracing/request-tracing-bundle/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/request-tracing/request-tracing-bundle/actions/workflows/ci.yml)
+
 Symfony bundle for request tracing.
 
 This bundle ships with a [Monolog] processor and a [Guzzle Middleware] for
 logging and propagating request IDs.
+
+## Requirements
+
+This bundle supports the PHP and Symfony versions that are officially supported
+by their maintainers:
+
+- [PHP] 8.2, 8.3, 8.4 and 8.5
+- [Symfony] 6.4 LTS, 7.4 LTS and 8.1
 
 ## Installation
 
@@ -63,6 +73,17 @@ services:
       - push: ['@RequestTracing\RequestTracingBundle\GuzzleHttp\RequestIdMiddleware']
 ```
 
+## Contributing
+
+```
+make dependencies   # install the Composer dependencies
+make test           # run the test suite
+make coverage       # report the test coverage
+make phpstan        # run static analysis
+make php-cs-fixer   # fix coding standards violations
+make qa             # run all quality assurance checks
+```
+
 [Guzzle]: https://docs.guzzlephp.org/en/stable/index.html
 [Guzzle Middleware]: https://docs.guzzlephp.org/en/stable/handlers-and-middleware.html#middleware
 [Datadog]: https://www.datadoghq.com/
@@ -70,3 +91,5 @@ services:
 [Monolog bundle]: https://symfony.com/doc/current/logging.html#monolog
 [Symfony Flex]: https://github.com/symfony/flex
 [Dependency Injection Container]: https://symfony.com/doc/current/components/dependency_injection.html
+[PHP]: https://www.php.net/supported-versions.php
+[Symfony]: https://symfony.com/releases
