@@ -9,85 +9,163 @@ on:
       - "main" # on merge to main branch assuming main branch is protected
   workflow_dispatch:
   schedule:
-    - cron: "37 13 * * 1"
+    - cron: "37 13 * * 1" # weekly, monday 13:37
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   tests:
-    name: "Run tests"
-    runs-on: ${{ matrix.os }}
+    name: "Tests (PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }}, ${{ matrix.dependencies }} dependencies)"
+    runs-on: "ubuntu-latest"
+    env:
+      SYMFONY_REQUIRE: "${{ matrix.symfony-version }}.*"
     strategy:
+      fail-fast: false
       matrix:
         php-version: # https://www.php.net/supported-versions.php
-          - "8.1"
           - "8.2"
-        dependencies:
-          - "lowest"
-          - "highest"
-        os:
-          - "ubuntu-latest"
+          - "8.3"
+          - "8.4"
+          - "8.5"
         symfony-version: # https://symfony.com/releases
-          - "5.4"
           - "6.4"
-          - "7.1"
+          - "7.4"
+          - "8.1"
+        dependencies:
+          - "highest"
+        exclude:
+          # Symfony 8 requires PHP 8.4
+          - php-version: "8.2"
+            symfony-version: "8.1"
+          - php-version: "8.3"
+            symfony-version: "8.1"
+        include:
+          # The oldest allowed Symfony patch releases trigger "implicitly nullable parameter"
+          # deprecations on PHP >= 8.4, so the lowest dependencies are only exercised on the
+          # lowest supported PHP.
+          - php-version: "8.2"
+            symfony-version: "6.4"
+            dependencies: "lowest"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
+
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
+          tools: "composer:v2"
           coverage: "none"
         env:
           fail-fast: true
-      - name: "Validate composer.json and composer.lock"
+
+      - name: "Validate composer.json"
         run: "composer validate --strict --no-interaction --ansi"
+
+      # Lets SYMFONY_REQUIRE pin every Symfony package to the version under test, which is what
+      # makes the symfony-version matrix axis mean anything.
+      - name: "Install Symfony Flex"
+        run: |
+          composer global config --no-plugins allow-plugins.symfony/flex true
+          composer global require --no-progress --no-scripts --no-plugins symfony/flex
+
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
+
       - name: "Run tests"
         run: "make test"
 
   coding-standards:
     name: "Coding standards"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        php-version:
-          - "8.2"
-        os:
-          - "ubuntu-latest"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
+
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "${{ matrix.php-version }}"
+          php-version: "8.4"
+          tools: "composer:v2"
           coverage: "none"
+
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
+        with:
+          dependency-versions: "highest"
+
       - name: "Check coding standards"
         run: "make php-cs-fixer-ci"
 
   static-analysis:
     name: "Static analysis"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        php-version:
-          - "8.2"
-        os:
-          - "ubuntu-latest"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
+
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "${{ matrix.php-version }}"
+          php-version: "8.4"
+          tools: "composer:v2"
           coverage: "none"
+
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
+        with:
+          dependency-versions: "highest"
+
       - name: "Run PHPStan"
-        run: "make phpstan"
+        run: "make phpstan-ci"
+
+  coverage:
+    name: "Code coverage"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.4"
+          tools: "composer:v2"
+          coverage: "pcov"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v4"
+        with:
+          dependency-versions: "highest"
+
+      - name: "Report code coverage"
+        run: "make coverage"
+
+  security:
+    name: "Security audit"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v7"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.4"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v4"
+        with:
+          dependency-versions: "highest"
+
+      - name: "Run Composer audit"
+        run: "make audit"
