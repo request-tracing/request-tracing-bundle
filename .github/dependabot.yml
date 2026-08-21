@@ -1,10 +1,38 @@
 version: 2
 updates:
-- package-ecosystem: composer
-  directory: "/"
-  schedule:
-    interval: weekly
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    versioning-strategy: "widen"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      symfony:
+        patterns:
+          - "symfony/*"
+      phpstan:
+        patterns:
+          - "phpstan/*"
+      phpunit:
+        patterns:
+          - "phpunit/*"
+      symfony-testing:
+        patterns:
+          - "matthiasnoback/*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
