@@ -1,6 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: "#^Method RequestTracing\\\\RequestTracingBundle\\\\DependencyInjection\\\\RequestTracingExtension\\:\\:loadInternal\\(\\) has parameter \\$mergedConfig with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/DependencyInjection/RequestTracingExtension.php
